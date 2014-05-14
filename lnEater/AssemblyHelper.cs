@@ -63,21 +63,45 @@ namespace lnE
             return (T)Activator.CreateInstance(t);
         }
 
+        private static string GetJsSource(string source, string varName)
+        {
+            if (!source.TrimEnd().EndsWith(";"))
+                source += ";";
+            if (!String.IsNullOrWhiteSpace(varName))
+                source += varName + ";";
+
+            return source;
+        }
+
         public static dynamic EvalJs(string source, string varName = null)
         {
 #pragma warning disable 618
             VsaEngine ve = VsaEngine.CreateEngine();
 #pragma warning restore
-            if (!source.EndsWith(";"))
-                source += ";";
-            if (!String.IsNullOrWhiteSpace(varName))
-                source += varName + ";";
+
+            source = GetJsSource(source, varName);
+
             return Eval.JScriptEvaluate(source, "unsafe", ve);
         }
 
         public static T EvalJs<T>(string source, string varName = null)
         {
             return (T)EvalJs(source, varName);
+        }
+
+        public static dynamic EvalJs2(string source, string varName = null)
+        {
+            source = GetJsSource(source, varName);
+
+            var script = new MSScriptControl.ScriptControl();
+            script.Language = "javascript";
+            var result = script.Eval(source);
+            return result;
+        }
+
+        public static T EvalJs2<T>(string source, string varName = null)
+        {
+            return (T)EvalJs2(source, varName);
         }
     }
 }

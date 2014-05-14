@@ -107,12 +107,14 @@ namespace lnE
             if (data == null)
                 return null;
 
-            //string html = Encoding.UTF8.GetString(data);
-
             var web = new HtmlDocument();
             using (MemoryStream ms = new MemoryStream(data))
-                web.Load(ms);
-            //web.LoadHtml(html);
+            {
+                var encoding = web.DetectEncoding(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                web.Load(ms, encoding);
+            }
+
             return web;
         }
 
