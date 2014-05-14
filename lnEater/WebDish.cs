@@ -12,6 +12,17 @@ namespace lnE
 {
     public abstract class WebDish : Dish
     {
+        private string referer;
+
+        protected void SetReferer(string url)
+        {
+            referer = url;
+        }
+        protected string GetIndexedName(int i, string url)
+        {
+            return Path.ChangeExtension(i.ToString(), Path.GetExtension(new Uri(url).LocalPath));
+        }
+
         protected string GetUrl(string baseUrl, string href)
         {
             Uri newUrl;
@@ -29,7 +40,7 @@ namespace lnE
 
         protected virtual bool BeforeRequest(WebClient client, string url)
         {
-            client.Headers.Add(HttpRequestHeader.Referer, url);
+            client.Headers.Add(HttpRequestHeader.Referer, String.IsNullOrWhiteSpace(referer) ? url : referer);
             client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)");
             //client.Headers.Add(HttpRequestHeader.Host, new Uri(url).Host);
             client.Headers.Add(HttpRequestHeader.Accept, "text/html, application/xhtml+xml, */*");
@@ -96,10 +107,12 @@ namespace lnE
             if (data == null)
                 return null;
 
-            string html = Encoding.UTF8.GetString(data);
+            //string html = Encoding.UTF8.GetString(data);
 
             var web = new HtmlDocument();
-            web.LoadHtml(html);
+            using (MemoryStream ms = new MemoryStream(data))
+                web.Load(ms);
+            //web.LoadHtml(html);
             return web;
         }
 

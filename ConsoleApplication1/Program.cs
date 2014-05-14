@@ -16,6 +16,17 @@ namespace lnE
     {
         static void Main(string[] args)
         {
+            string href = "http://www.imanhua.com/comic/4289/list_79578.html";
+            string baseUrl = "http://www.imanhua.com/comic/4289/";
+
+            Uri newUrl;
+            if (!Uri.TryCreate(href, UriKind.Absolute, out newUrl))
+            {
+                newUrl = new Uri(new Uri(baseUrl, UriKind.Absolute), href);
+            }
+            var str = newUrl.AbsoluteUri;
+
+
             //Process("史上最脑残的小发明！.xml");
             //Eater.Initialize("plugins");
             //var p = new Eater();

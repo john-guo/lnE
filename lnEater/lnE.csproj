@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyHelper.cs" />
+    <Compile Include="ComicDish.cs" />
     <Compile Include="Dish.cs" />
     <Compile Include="Eater.cs" />
     <None Include="plugins\bilibiliDish.cs">
@@ -54,10 +55,10 @@
     <None Include="plugins\folderDish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="plugins\ccmanhuaDish.cs">
+    <None Include="plugins\sfDish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="plugins\sfDish.cs">
+    <None Include="plugins\imanhuaDish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Compile Include="WebDish.cs" />

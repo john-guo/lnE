@@ -68,6 +68,8 @@ namespace lnE
 #pragma warning disable 618
             VsaEngine ve = VsaEngine.CreateEngine();
 #pragma warning restore
+            if (!source.EndsWith(";"))
+                source += ";";
             if (!String.IsNullOrWhiteSpace(varName))
                 source += varName + ";";
             return Eval.JScriptEvaluate(source, "unsafe", ve);
