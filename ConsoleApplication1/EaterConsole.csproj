@@ -54,6 +54,12 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.QualityTools.Testing.Fakes, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="SharpZipLib">
+      <HintPath>..\SharpZipLib.dll</HintPath>
+    </Reference>
+    <Reference Include="SwfDotNet.IO">
+      <HintPath>..\SwfDotNet.IO.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
