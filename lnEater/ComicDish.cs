@@ -82,12 +82,16 @@ namespace lnE
     {
         public abstract List<PageIndex> GetChapterIndex(HtmlAgilityPack.HtmlDocument html);
         public abstract List<PageIndex> GetImagePageIndex(HtmlAgilityPack.HtmlDocument html);
-        public abstract void EatImage(HtmlAgilityPack.HtmlDocument html, string fullFileName);
+        public abstract List<PageIndex> GetImageUrl(HtmlAgilityPack.HtmlDocument html);
         public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
         {
             List<PageIndex> pages;
-
-            if (level == 1)
+            
+            if (level == 2)
+            {
+                pages = GetImageUrl(html);
+            }
+            else if (level == 1)
             {
                 pages = GetImagePageIndex(html);
             }
@@ -99,13 +103,28 @@ namespace lnE
             return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
         }
 
+        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        {
+            if (level == 3)
+            {
+                var data = LoadData(url);
+                var di = Path.GetDirectoryName(path);
+                if (!Directory.Exists(di))
+                    Directory.CreateDirectory(di);
+                File.WriteAllBytes(path, data);
+                return null;
+            }
+
+            return base.Load(url, level, path, userData);
+        }
+
         public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
         {
-            var di = Path.GetDirectoryName(path);
-            if (!Directory.Exists(di))
-                Directory.CreateDirectory(di);
+            //var di = Path.GetDirectoryName(path);
+            //if (!Directory.Exists(di))
+            //    Directory.CreateDirectory(di);
 
-            EatImage(html, path);
+            //EatImage(html, path);
         }
     }
 }

@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 using wnd = System.Windows.Forms;
+using System.Diagnostics;
 
 namespace lnE
 {
@@ -46,31 +47,30 @@ namespace lnE
         public bool Prepare(string url, string format)
         {
             currentDishes = SelectDishes(url, format);
+            PrepareDishes(currentDishes);
+
             return currentDishes.Any();
         }
 
         public bool Prepare(wnd.IDataObject ido)
         {
             currentDishes = SelectDishes(ido);
+            PrepareDishes(currentDishes);
+
             return currentDishes.Any();
         }
 
-        private List<EDish> SelectDishes(string url, string format)
+        private IList<EDish> SelectDishes(string url, string format)
         {
             var list = (from dish in dishes
                         let s = dish.GetCustomAttribute<DishAttribute>()
                         where s.DataFormat == format && Regex.IsMatch(url, s.Pattern, RegexOptions.IgnoreCase)
                         select new EDish { url = url, path = String.Empty, dish = AssemblyHelper.GetObject<Dish>(dish), settings = s }).ToList();
-
-            list.ForEach(edish =>
-            {
-                edish.dish.SetSettings(edish.settings);
-            });
             
             return list;
         }
 
-        private List<EDish> SelectDishes(wnd.IDataObject ido)
+        private IList<EDish> SelectDishes(wnd.IDataObject ido)
         {
             var list = (from dish in dishes
                         let s = dish.GetCustomAttribute<DishAttribute>()
@@ -80,12 +80,15 @@ namespace lnE
                         where link != null && Regex.IsMatch(link.url, s.Pattern, RegexOptions.IgnoreCase)
                         select new EDish { url = link.url, path = link.name, dish = o, settings = s }).ToList();
 
-            list.ForEach(edish =>
+            return list;
+        }
+
+        private void PrepareDishes(IList<EDish> list)
+        {
+            foreach (var edish in list)
             {
                 edish.dish.SetSettings(edish.settings);
-            });
-
-            return list;
+            }
         }
 
         private async Task EatPage(EDish edish, string url, uint level, string path, object userData)
@@ -102,7 +105,15 @@ namespace lnE
             {
                 if (!String.IsNullOrWhiteSpace(edish.settings.Ext))
                     path = Path.ChangeExtension(path, edish.settings.Ext);
-                edish.dish.Eat(doc, url, path, userData);
+                try
+                {
+                    edish.dish.Eat(doc, url, path, userData);
+                }
+                catch (Exception ex)
+                {
+                    DumpException(ex);
+                }
+
                 return;
             }
 
@@ -111,7 +122,15 @@ namespace lnE
 
         private async Task EatPage(EDish edish, HtmlDocument html, string url, uint level, string path, object userData)
         {
-            var index = edish.dish.GetIndex(html, url, level, path, userData);
+            List<Index> index = null;
+            try
+            {
+                index = edish.dish.GetIndex(html, url, level, path, userData);
+            }
+            catch (Exception ex)
+            {
+                DumpException(ex);
+            }
             if (index == null)
                 return;
             foreach (var i in index)
@@ -174,11 +193,18 @@ namespace lnE
                     {
                         return edish.dish.Load(url, level, path, userData);
                     }
-                    catch
+                    catch (Exception ex)
                     {
+                        DumpException(ex);
                     }
                 }
             });
+        }
+
+        private void DumpException(Exception ex)
+        {
+            Trace.WriteLine(ex.Message);
+            Trace.WriteLine(ex.StackTrace);
         }
     }
 }

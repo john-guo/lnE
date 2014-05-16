@@ -12,7 +12,7 @@ using SwfDotNet.IO.Tags;
 namespace lnE
 {
     [ComicDish("http://ac.qq.com/", Ext = ".jpg")]
-    class qqDish : ComicDish
+    public class qqDish : ComicDish
     {
         public override List<PageIndex> GetChapterIndex(HtmlDocument html)
         {

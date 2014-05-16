@@ -9,7 +9,7 @@ using System.IO;
 namespace lnE
 {
     [ComicDish("http://www.tuku.cc/comic/")]
-    class tukuDish : ComicDish
+    public class tukuDish : ComicDish
     {
         const string server = "pic.tuku.cc:8899";
 
