@@ -28,12 +28,12 @@ namespace lnE
         private List<string> files = new List<string>();
         private List<string> folders = new List<string>();
 
-        public override List<Index> GetIndex(HtmlDocument html, string url, uint level, string path)
+        public override List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData)
         {
             return null;
         }
 
-        public override void Eat(HtmlDocument html, string url, string path)
+        public override void Eat(HtmlDocument html, string url, string path, object userData)
         {
 
         }
@@ -56,7 +56,7 @@ namespace lnE
             }
         }
 
-        public override HtmlDocument Load(string url, uint level, string path)
+        public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
             Do(files, url, path);
 

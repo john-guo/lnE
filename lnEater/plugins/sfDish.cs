@@ -11,7 +11,7 @@ namespace lnE
     [DishAttribute("http://book.sfacg.com/Novel/", Level = 1, Ext = ".txt")]
     public class sfDish : WebDish
     {
-        public override List<Index> GetIndex(HtmlDocument html, string url, uint level, string path)
+        public override List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData)
         {
             var books = new List<Index>();
 
@@ -36,17 +36,17 @@ namespace lnE
             return books;
         }
 
-        public override HtmlDocument Load(string url, uint level, string path)
+        public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
             if (level == 0)
             {
                 url = new Uri(new Uri(url), "MainIndex/").AbsoluteUri;
             }
 
-            return base.Load(url, level, path);
+            return base.Load(url, level, path, userData);
         }
 
-        public override void Eat(HtmlDocument html, string url, string path)
+        public override void Eat(HtmlDocument html, string url, string path, object userData)
         {
             var view = html.DocumentNode.SelectNodes("//span[@id='ChapterBody']");
             StringBuilder sb = new StringBuilder();

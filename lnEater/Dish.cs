@@ -16,35 +16,44 @@ namespace lnE
         {
             name = String.Empty;
             url = String.Empty;
-            level = 0; 
+            level = 0;
+            userData = null;
         }
 
         public Index(uint curLevel)
         {
             name = String.Empty;
             url = String.Empty;
-            level = curLevel + 1;  
+            level = curLevel + 1;
+            userData = null;
         }
 
         public string name;
         public string url;
         public uint level;
+        public object userData;
     }
 
     public interface IDish
     {
-        HtmlDocument Load(string url, uint level, string path);
-        List<Index> GetIndex(HtmlDocument html, string url, uint level, string path);
-        void Eat(HtmlDocument html, string url, string path);
+        HtmlDocument Load(string url, uint level, string path, object userData);
+        List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData);
+        void Eat(HtmlDocument html, string url, string path, object userData);
         Index GetLink(object rawData);
     }
 
     public abstract class Dish : IDish
     {
-        public abstract HtmlDocument Load(string url, uint level, string path);
-        public abstract List<Index> GetIndex(HtmlDocument html, string url, uint level, string path);
-        public abstract void Eat(HtmlDocument html, string url, string path);
+        protected DishAttribute dishSettings;
+        public abstract HtmlDocument Load(string url, uint level, string path, object userData);
+        public abstract List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData);
+        public abstract void Eat(HtmlDocument html, string url, string path, object userData);
         public abstract Index GetLink(object rawData);
+
+        public void SetSettings(DishAttribute settings)
+        {
+            dishSettings = settings;
+        }
 
         protected string XTrim(string str)
         {

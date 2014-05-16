@@ -23,7 +23,7 @@ namespace lnE
             return base.BeforeRequest(client, url);
         }
 
-        public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path)
+        public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
         {
             var books = new List<Index>();
 
@@ -59,13 +59,13 @@ namespace lnE
             return String.Format("http://comment.bilibili.tv/{0}.xml", id);
         }
 
-        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path)
+        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
         {
             html.Save(path, Encoding.UTF8);
             ExportAss(path);
         }
 
-        public override HtmlDocument Load(string url, uint level, string path)
+        public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
             if (level == 0)
             {
@@ -77,7 +77,7 @@ namespace lnE
                 url = String.Format("http://www.bilibili.tv/ass/{0}.html", aid);
             }
 
-            return base.Load(url, level, path);
+            return base.Load(url, level, path, userData);
         }
 
         void ExportAss(string filename)

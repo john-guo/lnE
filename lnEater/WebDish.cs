@@ -20,7 +20,11 @@ namespace lnE
         }
         protected string GetIndexedName(int i, string url)
         {
-            return Path.ChangeExtension(i.ToString(), Path.GetExtension(new Uri(url).LocalPath));
+            var ext = Path.GetExtension(new Uri(url).LocalPath);
+            if (String.IsNullOrWhiteSpace(ext))
+                ext = dishSettings.Ext;
+
+            return Path.ChangeExtension(i.ToString(), ext);
         }
 
         protected string GetUrl(string baseUrl, string href)
@@ -101,7 +105,7 @@ namespace lnE
             return data;
         }
 
-        public override HtmlDocument Load(string url, uint level, string path)
+        public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
             var data = LoadData(url);
             if (data == null)

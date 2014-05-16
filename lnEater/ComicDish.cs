@@ -23,17 +23,19 @@ namespace lnE
         {
             name = String.Empty;
             url = String.Empty;
+            userData = null;
         }
 
         public string name;
         public string url;
+        public object userData;
     }
 
     public abstract class ComicDish : WebDish
     {
         public abstract List<PageIndex> GetChapterIndex(HtmlAgilityPack.HtmlDocument html);
         public abstract List<PageIndex> GetImageIndex(HtmlAgilityPack.HtmlDocument html);
-        public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path)
+        public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
         {
             List<PageIndex> pages;
 
@@ -47,14 +49,20 @@ namespace lnE
                 pages = GetChapterIndex(html);
             }
 
-            return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url) });
+            return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
         }
 
-        public override HtmlDocument Load(string url, uint level, string path)
+        protected virtual byte[] OnData(byte[] data, object userData)
+        {
+            return data;
+        }
+
+        public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
             if (level == 2)
             {
                 var data = LoadData(url);
+                data = OnData(data, userData);
                 var di = Path.GetDirectoryName(path);
                 if (!Directory.Exists(di))
                     Directory.CreateDirectory(di);
@@ -62,10 +70,10 @@ namespace lnE
                 return null;
             }
 
-            return base.Load(url, level, path);
+            return base.Load(url, level, path, userData);
         }
 
-        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path)
+        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
         {
             
         }
@@ -75,7 +83,7 @@ namespace lnE
         public abstract List<PageIndex> GetChapterIndex(HtmlAgilityPack.HtmlDocument html);
         public abstract List<PageIndex> GetImagePageIndex(HtmlAgilityPack.HtmlDocument html);
         public abstract void EatImage(HtmlAgilityPack.HtmlDocument html, string fullFileName);
-        public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path)
+        public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
         {
             List<PageIndex> pages;
 
@@ -88,10 +96,10 @@ namespace lnE
                 pages = GetChapterIndex(html);
             }
 
-            return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url) });
+            return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
         }
 
-        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path)
+        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
         {
             var di = Path.GetDirectoryName(path);
             if (!Directory.Exists(di))

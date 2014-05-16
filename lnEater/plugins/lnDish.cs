@@ -11,7 +11,7 @@ namespace lnE
     [DishAttribute("http://lknovel.lightnovel.cn/main/vollist/", Level = 1, Ext=".txt")]
     public class lnDish : WebDish
     {
-        public override List<Index> GetIndex(HtmlDocument html, string url, uint level, string path)
+        public override List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData)
         {
             var books = new List<Index>();
 
@@ -38,7 +38,7 @@ namespace lnE
             return books;
         }
 
-        public override void Eat(HtmlDocument html, string url, string path)
+        public override void Eat(HtmlDocument html, string url, string path, object userData)
         {
             var view = html.DocumentNode.SelectNodes("//div[@id='J_view']");
             StringBuilder sb = new StringBuilder();

@@ -29,7 +29,11 @@ namespace lnE
 
         public static void Initialize(string path)
         {
-            var dll = new[] { "HtmlAgilityPack.dll", "lnE.dll" };
+            var dll = new[] 
+            { 
+                "HtmlAgilityPack.dll", 
+                "lnE.dll",
+            };
             var references = ConfigurationManager.AppSettings["references"];
             if (!String.IsNullOrWhiteSpace(references))
             {
@@ -57,6 +61,12 @@ namespace lnE
                         let s = dish.GetCustomAttribute<DishAttribute>()
                         where s.DataFormat == format && Regex.IsMatch(url, s.Pattern, RegexOptions.IgnoreCase)
                         select new EDish { url = url, path = String.Empty, dish = AssemblyHelper.GetObject<Dish>(dish), settings = s }).ToList();
+
+            list.ForEach(edish =>
+            {
+                edish.dish.SetSettings(edish.settings);
+            });
+            
             return list;
         }
 
@@ -69,12 +79,18 @@ namespace lnE
                         let link = o.GetLink(ido.GetData(s.DataFormat))
                         where link != null && Regex.IsMatch(link.url, s.Pattern, RegexOptions.IgnoreCase)
                         select new EDish { url = link.url, path = link.name, dish = o, settings = s }).ToList();
+
+            list.ForEach(edish =>
+            {
+                edish.dish.SetSettings(edish.settings);
+            });
+
             return list;
         }
 
-        private async Task EatPage(EDish edish, string url, uint level, string path)
+        private async Task EatPage(EDish edish, string url, uint level, string path, object userData)
         {
-            var doc = await Load(edish, url, level, path);
+            var doc = await Load(edish, url, level, path, userData);
 
             if (doc == null)
                 return;
@@ -86,21 +102,21 @@ namespace lnE
             {
                 if (!String.IsNullOrWhiteSpace(edish.settings.Ext))
                     path = Path.ChangeExtension(path, edish.settings.Ext);
-                edish.dish.Eat(doc, url, path);
+                edish.dish.Eat(doc, url, path, userData);
                 return;
             }
 
-            await EatPage(edish, doc, url, level, path);
+            await EatPage(edish, doc, url, level, path, userData);
         }
 
-        private async Task EatPage(EDish edish, HtmlDocument html, string url, uint level, string path)
+        private async Task EatPage(EDish edish, HtmlDocument html, string url, uint level, string path, object userData)
         {
-            var index = edish.dish.GetIndex(html, url, level, path);
+            var index = edish.dish.GetIndex(html, url, level, path, userData);
             if (index == null)
                 return;
             foreach (var i in index)
             {
-                await EatPage(edish, i.url, i.level, Path.Combine(path, i.name));
+                await EatPage(edish, i.url, i.level, Path.Combine(path, i.name), i.userData);
             }
         }
 
@@ -141,14 +157,14 @@ namespace lnE
                 if (!String.IsNullOrWhiteSpace(path) && !Directory.Exists(path))
                     Directory.CreateDirectory(path);
 
-                var doc = await Load(edish, edish.url, 0, path);
+                var doc = await Load(edish, edish.url, 0, path, null);
                 if (doc == null)
                     continue;
-                await EatPage(edish, doc, edish.url, 0, path);
+                await EatPage(edish, doc, edish.url, 0, path, null);
             }
         }
 
-        private async Task<HtmlDocument> Load(EDish edish, string url, uint level, string path)
+        private async Task<HtmlDocument> Load(EDish edish, string url, uint level, string path, object userData)
         {
             return await Task.Run(() =>
             {
@@ -156,7 +172,7 @@ namespace lnE
                 {
                     try
                     {
-                        return edish.dish.Load(url, level, path);
+                        return edish.dish.Load(url, level, path, userData);
                     }
                     catch
                     {
