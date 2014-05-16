@@ -37,6 +37,9 @@
       <HintPath>..\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.JScript" />
+    <Reference Include="SwfDotNet.IO">
+      <HintPath>..\SwfDotNet.IO.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />

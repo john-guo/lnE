@@ -39,7 +39,7 @@ namespace lnE
             var sources = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 
             var result = provider.CompileAssemblyFromFile(cp, sources);
-            if (result.CompiledAssembly == null)
+            if (result.Errors.HasErrors)
             {
                 Trace.WriteLine(result.Output.Cast<string>().Aggregate((a, b) => a + Environment.NewLine + b));
                 throw new Exception("Compile Failed");

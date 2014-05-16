@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,6 +16,13 @@ namespace lnE
         [STAThread]
         static void Main()
         {
+            var logfile = ConfigurationManager.AppSettings["log"];
+            if (!String.IsNullOrWhiteSpace(logfile)) 
+            {
+                Trace.AutoFlush = true;
+                Trace.Listeners.Add(new TextWriterTraceListener(logfile));
+            }
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
