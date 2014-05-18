@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.JScript;
 using Microsoft.JScript.Vsa;
@@ -102,6 +103,16 @@ namespace lnE
         public static T EvalJs2<T>(string source, string varName = null)
         {
             return (T)EvalJs2(source, varName);
+        }
+
+        public static string ParseString(string pattern, string str)
+        {
+            var ex = new Regex(pattern);
+            var match = ex.Match(str);
+            if (match.Groups.Count < 2)
+                return null;
+
+            return match.Groups[1].Value;
         }
     }
 }

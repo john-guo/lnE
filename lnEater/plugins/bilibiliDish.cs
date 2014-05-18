@@ -16,11 +16,11 @@ namespace lnE
     {
         private string aid;
 
-        protected override bool BeforeRequest(WebClient client, string url)
+        protected override bool BeforeRequest(WebClient client, string url, uint level)
         {
             client.Headers.Add(HttpRequestHeader.Cookie, "DedeUserID=1850724; DedeUserID__ckMd5=d746471f8c40baeb; SESSDATA=1e8e8161%2C1375784918%2C4042ce67");
 
-            return base.BeforeRequest(client, url);
+            return base.BeforeRequest(client, url, level);
         }
 
         public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)

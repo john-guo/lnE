@@ -13,7 +13,14 @@ namespace lnE
     {
         const string server = "pic.tuku.cc:8899";
 
-        public override List<PageIndex> GetChapterIndex(HtmlDocument html)
+        /*
+        默认服务器 :http://pic.tuku.cc:8899
+        电信1 :http://p10.tuku.cc:8899
+        电信2 :http://p11.tuku.cc:8899
+        网通 :http://pic3.tuku.cc:8899
+        */
+
+        public override List<PageIndex> GetChapterIndex(HtmlDocument html, string baseUrl)
         {
             var pages = new List<PageIndex>();
 
@@ -30,7 +37,7 @@ namespace lnE
             return pages;
         }
 
-        public override List<PageIndex> GetImageIndex(HtmlDocument html)
+        public override List<PageIndex> GetImageIndex(HtmlDocument html, string baseUrl)
         {
             var pages = new List<PageIndex>();
 
@@ -38,7 +45,7 @@ namespace lnE
             var js = String.Format("serverUrl='{0}';var a=[];for(var j=1;j<=pages;++j)a.push(getImgUrl(j));a", server);
             var result = AssemblyHelper.EvalJs2(script, js);
 
-            int i = 0;
+            int i = 1;
             foreach (var a in result)
             {
                 var u = String.Format("http://{0}", a);

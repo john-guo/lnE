@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,6 +20,7 @@ namespace lnE
             var logfile = ConfigurationManager.AppSettings["log"];
             if (!String.IsNullOrWhiteSpace(logfile)) 
             {
+                File.Create(logfile).Close();
                 Trace.AutoFlush = true;
                 Trace.Listeners.Add(new TextWriterTraceListener(logfile));
             }

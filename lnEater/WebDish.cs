@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using HtmlAgilityPack;
 
@@ -18,11 +19,20 @@ namespace lnE
         {
             referer = url;
         }
+
+        protected string GetIndexedName(string url)
+        {
+            return GetIndexedName(0, url);
+        }
+
         protected string GetIndexedName(int i, string url)
         {
             var ext = Path.GetExtension(new Uri(url).LocalPath);
             if (String.IsNullOrWhiteSpace(ext))
                 ext = dishSettings.Ext;
+
+            if (i == 0)
+                return Path.ChangeExtension(Eater.hyphen, ext);
 
             return Path.ChangeExtension(i.ToString(), ext);
         }
@@ -42,7 +52,7 @@ namespace lnE
             return WebUtility.HtmlDecode(html);
         }
 
-        protected virtual bool BeforeRequest(WebClient client, string url)
+        protected virtual bool BeforeRequest(WebClient client, string url, uint level)
         {
             client.Headers.Add(HttpRequestHeader.Referer, String.IsNullOrWhiteSpace(referer) ? url : referer);
             client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)");
@@ -50,17 +60,21 @@ namespace lnE
             client.Headers.Add(HttpRequestHeader.Accept, "text/html, application/xhtml+xml, */*");
             client.Headers.Add(HttpRequestHeader.AcceptLanguage, "zh-CN");
             client.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
-            client.Encoding = Encoding.UTF8;
+            //client.Encoding = Encoding.UTF8;
             //client.Proxy = new WebProxy("127.0.0.1", 8888);
 
             return true;
         }
 
-        protected virtual byte[] LoadData(string url)
+        protected virtual byte[] LoadData(string url, uint level)
         {
             var client = new WebClient();
+            return LoadData(client, url, level);
+        }
 
-            if (!BeforeRequest(client, url))
+        protected virtual byte[] LoadData(WebClient client, string url, uint level)
+        {
+            if (!BeforeRequest(client, url, level))
                 return null;
 
             var data = client.DownloadData(url);
@@ -107,15 +121,38 @@ namespace lnE
 
         public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
-            var data = LoadData(url);
+            var client = new WebClient();
+            var data = LoadData(client, url, level);
             if (data == null)
                 return null;
 
+            Encoding charset = null;
+            var ct = client.ResponseHeaders["Content-Type"];
+            var ex = new Regex("charset=(.+)");
+            var match = ex.Match(ct);
+            if (match.Groups.Count == 2)
+            {
+                charset = Encoding.GetEncoding(match.Groups[1].Value);
+            }
+            
             var web = new HtmlDocument();
+            Encoding encoding = null;
             using (MemoryStream ms = new MemoryStream(data))
             {
-                var encoding = web.DetectEncoding(ms);
-                ms.Seek(0, SeekOrigin.Begin);
+                encoding = web.DetectEncoding(ms);
+                if (encoding == null)
+                    encoding = charset;
+                if (encoding == null)
+                    encoding = Encoding.UTF8;
+            }
+
+            if (charset != null && charset != encoding)
+            {
+                data = Encoding.Convert(charset, encoding, data);
+            }
+
+            using (MemoryStream ms = new MemoryStream(data))
+            {
                 web.Load(ms, encoding);
             }
 

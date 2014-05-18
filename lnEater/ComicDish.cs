@@ -31,10 +31,22 @@ namespace lnE
         public object userData;
     }
 
-    public abstract class ComicDish : WebDish
+    public abstract class BaseComicDish : WebDish
     {
-        public abstract List<PageIndex> GetChapterIndex(HtmlAgilityPack.HtmlDocument html);
-        public abstract List<PageIndex> GetImageIndex(HtmlAgilityPack.HtmlDocument html);
+        public abstract List<PageIndex> GetChapterIndex(HtmlAgilityPack.HtmlDocument html, string baseUrl);
+        public abstract List<PageIndex> GetImageIndex(HtmlAgilityPack.HtmlDocument html, string baseUrl);
+        protected virtual byte[] OnData(byte[] data, object userData)
+        {
+            return data;
+        }
+        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
+        {
+
+        }
+    }
+
+    public abstract class ComicDish : BaseComicDish
+    {
         public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
         {
             List<PageIndex> pages;
@@ -42,26 +54,21 @@ namespace lnE
             if (level == 1)
             {
                 SetReferer(url);
-                pages = GetImageIndex(html);
+                pages = GetImageIndex(html, url);
             }
             else //level == 0
             {
-                pages = GetChapterIndex(html);
+                pages = GetChapterIndex(html, url);
             }
 
             return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
-        }
-
-        protected virtual byte[] OnData(byte[] data, object userData)
-        {
-            return data;
         }
 
         public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
             if (level == 2)
             {
-                var data = LoadData(url);
+                var data = LoadData(url, level);
                 data = OnData(data, userData);
                 var di = Path.GetDirectoryName(path);
                 if (!Directory.Exists(di))
@@ -72,32 +79,27 @@ namespace lnE
 
             return base.Load(url, level, path, userData);
         }
-
-        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
-        {
-            
-        }
     }
-    public abstract class ComicDish2 : WebDish
+
+    public abstract class ComicDish2 : BaseComicDish
     {
-        public abstract List<PageIndex> GetChapterIndex(HtmlAgilityPack.HtmlDocument html);
-        public abstract List<PageIndex> GetImagePageIndex(HtmlAgilityPack.HtmlDocument html);
-        public abstract List<PageIndex> GetImageUrl(HtmlAgilityPack.HtmlDocument html);
+        public abstract List<PageIndex> GetImagePageIndex(HtmlAgilityPack.HtmlDocument html, string baseUrl);
         public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
         {
             List<PageIndex> pages;
             
             if (level == 2)
             {
-                pages = GetImageUrl(html);
+                pages = GetImageIndex(html, url);
             }
             else if (level == 1)
             {
-                pages = GetImagePageIndex(html);
+                SetReferer(url);
+                pages = GetImagePageIndex(html, url);
             }
             else //level == 0
             {
-                pages = GetChapterIndex(html);
+                pages = GetChapterIndex(html, url);
             }
 
             return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
@@ -107,7 +109,8 @@ namespace lnE
         {
             if (level == 3)
             {
-                var data = LoadData(url);
+                var data = LoadData(url, level);
+                data = OnData(data, userData);
                 var di = Path.GetDirectoryName(path);
                 if (!Directory.Exists(di))
                     Directory.CreateDirectory(di);
@@ -116,15 +119,6 @@ namespace lnE
             }
 
             return base.Load(url, level, path, userData);
-        }
-
-        public override void Eat(HtmlAgilityPack.HtmlDocument html, string url, string path, object userData)
-        {
-            //var di = Path.GetDirectoryName(path);
-            //if (!Directory.Exists(di))
-            //    Directory.CreateDirectory(di);
-
-            //EatImage(html, path);
         }
     }
 }

@@ -16,6 +16,8 @@ namespace lnE
 {
     public class Eater
     {
+        public const string hyphen = "_";
+
         private struct EDish
         {
             public string url;
@@ -135,7 +137,17 @@ namespace lnE
                 return;
             foreach (var i in index)
             {
-                await EatPage(edish, i.url, i.level, Path.Combine(path, i.name), i.userData);
+                string newPath;
+                if (i.name.StartsWith(hyphen))
+                {
+                    newPath = path + i.name;
+                }
+                else
+                {
+                    newPath =  Path.Combine(path, i.name);
+                }
+
+                await EatPage(edish, i.url, i.level, newPath, i.userData);
             }
         }
 

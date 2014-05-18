@@ -13,7 +13,18 @@ namespace lnE
     {
         const string server = "t4.mangafiles.com";
 
-        public override List<PageIndex> GetChapterIndex(HtmlDocument html)
+        /*
+         'servs': [
+        { 'name': '电信①', 'host': 't4.mangafiles.com' },
+        { 'name': '电信②', 'host': 't5.mangafiles.com' },
+        { 'name': '电信③', 'host': 't6.mangafiles.com' },
+        { 'name': '广东电信', 'host': 't6.mangafiles.com' },
+        { 'name': '江苏电信', 'host': 't5.mangafiles.com' },
+        { 'name': '联通', 'host': 'c5.mangafiles.com' }
+        ],
+        */
+
+        public override List<PageIndex> GetChapterIndex(HtmlDocument html, string baseUrl)
         {
             var pages = new List<PageIndex>();
 
@@ -30,7 +41,7 @@ namespace lnE
             return pages;
         }
 
-        public override List<PageIndex> GetImageIndex(HtmlDocument html)
+        public override List<PageIndex> GetImageIndex(HtmlDocument html, string baseUrl)
         {
             var pages = new List<PageIndex>();
 
@@ -42,7 +53,7 @@ namespace lnE
             {
                 var a = cInfo["files"][i];
                 var u = String.Format("http://{0}{1}{2}", server, e, a);
-                var n = GetIndexedName(i, u);
+                var n = GetIndexedName(i + 1, u);
                 pages.Add(new PageIndex() { name = n, url = u });
             }
 

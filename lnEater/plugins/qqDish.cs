@@ -14,7 +14,7 @@ namespace lnE
     [ComicDish("http://ac.qq.com/", Ext = ".jpg")]
     public class qqDish : ComicDish
     {
-        public override List<PageIndex> GetChapterIndex(HtmlDocument html)
+        public override List<PageIndex> GetChapterIndex(HtmlDocument html, string baseUrl)
         {
             var pages = new List<PageIndex>();
 
@@ -73,7 +73,7 @@ namespace lnE
             return pages;
         }
 
-        public override List<PageIndex> GetImageIndex(HtmlDocument html)
+        public override List<PageIndex> GetImageIndex(HtmlDocument html, string baseUrl)
         {
             var pages = new List<PageIndex>();
 
