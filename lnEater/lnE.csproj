@@ -94,6 +94,12 @@
     <None Include="plugins\blgl8Dish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="plugins\ehentaiDish.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Compile Include="MyWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WebDish.cs" />
     <None Include="plugins\lnDish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

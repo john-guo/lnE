@@ -54,6 +54,8 @@ namespace lnE
 
         protected virtual bool BeforeRequest(WebClient client, string url, uint level)
         {
+            ServicePointManager.DefaultConnectionLimit = 10;
+
             client.Headers.Add(HttpRequestHeader.Referer, String.IsNullOrWhiteSpace(referer) ? url : referer);
             client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; WOW64; Trident/6.0)");
             //client.Headers.Add(HttpRequestHeader.Host, new Uri(url).Host);
@@ -61,14 +63,13 @@ namespace lnE
             client.Headers.Add(HttpRequestHeader.AcceptLanguage, "zh-CN");
             client.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate");
             //client.Encoding = Encoding.UTF8;
-            //client.Proxy = new WebProxy("127.0.0.1", 8888);
 
             return true;
         }
 
         protected virtual byte[] LoadData(string url, uint level)
         {
-            var client = new WebClient();
+            var client = new MyWebClient();
             return LoadData(client, url, level);
         }
 
@@ -121,7 +122,7 @@ namespace lnE
 
         public override HtmlDocument Load(string url, uint level, string path, object userData)
         {
-            var client = new WebClient();
+            var client = new MyWebClient();
             var data = LoadData(client, url, level);
             if (data == null)
                 return null;
