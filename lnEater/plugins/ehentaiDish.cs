@@ -82,7 +82,7 @@ namespace lnE
             }
             else
             {
-                if (tryCount == 0)
+                if (tryCount < 3)
                    client.Proxy = null;
             }
             
