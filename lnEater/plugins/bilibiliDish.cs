@@ -16,11 +16,11 @@ namespace lnE
     {
         private string aid;
 
-        protected override bool BeforeRequest(WebClient client, string url, uint level)
+        protected override bool BeforeRequest(WebClient client, string url, uint level, int tryCount)
         {
             client.Headers.Add(HttpRequestHeader.Cookie, "DedeUserID=1850724; DedeUserID__ckMd5=d746471f8c40baeb; SESSDATA=1e8e8161%2C1375784918%2C4042ce67");
 
-            return base.BeforeRequest(client, url, level);
+            return base.BeforeRequest(client, url, level, tryCount);
         }
 
         public override List<Index> GetIndex(HtmlAgilityPack.HtmlDocument html, string url, uint level, string path, object userData)
@@ -65,7 +65,7 @@ namespace lnE
             ExportAss(path);
         }
 
-        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        public override HtmlDocument Load(string url, uint level, string path, object userData, int tryCount)
         {
             if (level == 0)
             {
@@ -77,7 +77,7 @@ namespace lnE
                 url = String.Format("http://www.bilibili.tv/ass/{0}.html", aid);
             }
 
-            return base.Load(url, level, path, userData);
+            return base.Load(url, level, path, userData, tryCount);
         }
 
         void ExportAss(string filename)

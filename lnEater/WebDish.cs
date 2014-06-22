@@ -52,7 +52,7 @@ namespace lnE
             return WebUtility.HtmlDecode(html);
         }
 
-        protected virtual bool BeforeRequest(WebClient client, string url, uint level)
+        protected virtual bool BeforeRequest(WebClient client, string url, uint level, int tryCount)
         {
             ServicePointManager.DefaultConnectionLimit = 10;
 
@@ -67,15 +67,15 @@ namespace lnE
             return true;
         }
 
-        protected virtual byte[] LoadData(string url, uint level)
+        protected virtual byte[] LoadData(string url, uint level, int tryCount)
         {
             var client = new MyWebClient();
-            return LoadData(client, url, level);
+            return LoadData(client, url, level, tryCount);
         }
 
-        protected virtual byte[] LoadData(WebClient client, string url, uint level)
+        protected virtual byte[] LoadData(WebClient client, string url, uint level, int tryCount)
         {
-            if (!BeforeRequest(client, url, level))
+            if (!BeforeRequest(client, url, level, tryCount))
                 return null;
 
             var data = client.DownloadData(url);
@@ -120,10 +120,10 @@ namespace lnE
             return data;
         }
 
-        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        public override HtmlDocument Load(string url, uint level, string path, object userData, int tryCount)
         {
             var client = new MyWebClient();
-            var data = LoadData(client, url, level);
+            var data = LoadData(client, url, level, tryCount);
             if (data == null)
                 return null;
 

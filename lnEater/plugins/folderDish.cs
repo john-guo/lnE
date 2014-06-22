@@ -56,7 +56,7 @@ namespace lnE
             }
         }
 
-        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        public override HtmlDocument Load(string url, uint level, string path, object userData, int tryCount)
         {
             Do(files, url, path);
 

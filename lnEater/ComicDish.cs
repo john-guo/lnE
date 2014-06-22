@@ -64,11 +64,11 @@ namespace lnE
             return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
         }
 
-        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        public override HtmlDocument Load(string url, uint level, string path, object userData, int tryCount)
         {
             if (level == 2)
             {
-                var data = LoadData(url, level);
+                var data = LoadData(url, level, tryCount);
                 data = OnData(data, userData);
                 var di = Path.GetDirectoryName(path);
                 if (!Directory.Exists(di))
@@ -77,7 +77,7 @@ namespace lnE
                 return null;
             }
 
-            return base.Load(url, level, path, userData);
+            return base.Load(url, level, path, userData, tryCount);
         }
     }
 
@@ -105,11 +105,11 @@ namespace lnE
             return pages.ConvertAll(page => new Index(level) { name = page.name, url = GetUrl(url, page.url), userData = page.userData });
         }
 
-        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        public override HtmlDocument Load(string url, uint level, string path, object userData, int tryCount)
         {
             if (level == 3)
             {
-                var data = LoadData(url, level);
+                var data = LoadData(url, level, tryCount);
                 data = OnData(data, userData);
                 var di = Path.GetDirectoryName(path);
                 if (!Directory.Exists(di))
@@ -118,7 +118,7 @@ namespace lnE
                 return null;
             }
 
-            return base.Load(url, level, path, userData);
+            return base.Load(url, level, path, userData, tryCount);
         }
     }
 }

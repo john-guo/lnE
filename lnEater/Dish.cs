@@ -36,7 +36,7 @@ namespace lnE
 
     public interface IDish
     {
-        HtmlDocument Load(string url, uint level, string path, object userData);
+        HtmlDocument Load(string url, uint level, string path, object userData, int tryCount);
         List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData);
         void Eat(HtmlDocument html, string url, string path, object userData);
         Index GetLink(object rawData);
@@ -45,7 +45,7 @@ namespace lnE
     public abstract class Dish : IDish
     {
         protected DishAttribute dishSettings;
-        public abstract HtmlDocument Load(string url, uint level, string path, object userData);
+        public abstract HtmlDocument Load(string url, uint level, string path, object userData, int tryCount);
         public abstract List<Index> GetIndex(HtmlDocument html, string url, uint level, string path, object userData);
         public abstract void Eat(HtmlDocument html, string url, string path, object userData);
         public abstract Index GetLink(object rawData);

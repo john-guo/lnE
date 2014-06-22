@@ -36,14 +36,14 @@ namespace lnE
             return books;
         }
 
-        public override HtmlDocument Load(string url, uint level, string path, object userData)
+        public override HtmlDocument Load(string url, uint level, string path, object userData, int tryCount)
         {
             if (level == 0)
             {
                 url = new Uri(new Uri(url), "MainIndex/").AbsoluteUri;
             }
 
-            return base.Load(url, level, path, userData);
+            return base.Load(url, level, path, userData, tryCount);
         }
 
         public override void Eat(HtmlDocument html, string url, string path, object userData)

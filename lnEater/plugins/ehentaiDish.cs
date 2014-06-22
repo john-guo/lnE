@@ -54,18 +54,39 @@ namespace lnE
         {
             var pages = new List<PageIndex>();
 
-            var u = html.DocumentNode.SelectSingleNode("//div[@class='sni']/a[1]/img").GetAttributeValue("src", String.Empty);
-            var n = Path.GetFileName(new Uri(u).AbsolutePath);
+            string u, n;
+
+            try
+            {
+                u = html.DocumentNode.SelectSingleNode("//div[@class='sni']//img[@id='img']").GetAttributeValue("src", String.Empty);
+                n = Path.GetFileName(new Uri(u).AbsolutePath);
+            }
+            catch
+            {
+                u = html.DocumentNode.SelectSingleNode("//div[@class='sni']/a[1]/img").GetAttributeValue("src", String.Empty);
+                n = Path.GetFileName(new Uri(u).AbsolutePath);
+            }
 
             pages.Add(new PageIndex() { name = n, url = u });
 
             return pages;
         }
 
-        protected override bool BeforeRequest(WebClient client, string url, uint level)
+        protected override bool BeforeRequest(WebClient client, string url, uint level, int tryCount)
         {
-            client.Proxy = new WebProxy("127.0.0.1", 8087);
-            return base.BeforeRequest(client, url, level);
+            client.Proxy = new WebProxy("127.0.0.1", 8080);
+
+            if (level != 3)
+            {
+                client.Headers.Add(HttpRequestHeader.Cookie, "nw=always");
+            }
+            else
+            {
+                if (tryCount == 0)
+                   client.Proxy = null;
+            }
+            
+            return base.BeforeRequest(client, url, level, tryCount);
         }
     }
 }

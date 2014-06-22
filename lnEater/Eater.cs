@@ -17,7 +17,7 @@ namespace lnE
     public class Eater
     {
         public const string hyphen = "_";
-
+        public const int retryCount = 10;
         private struct EDish
         {
             public string url;
@@ -199,15 +199,21 @@ namespace lnE
         {
             return await Task.Run(() =>
             {
+                var count = 0;
                 while (true)
                 {
                     try
                     {
-                        return edish.dish.Load(url, level, path, userData);
+                        return edish.dish.Load(url, level, path, userData, count++);
                     }
                     catch (Exception ex)
                     {
                         DumpException(ex);
+                        if (count > retryCount)
+                        {
+                            DumpException(new Exception("too much wrong"));
+                            return null;
+                        }
                     }
                 }
             });
