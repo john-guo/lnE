@@ -72,7 +72,7 @@ namespace lnE
             return pages;
         }
 
-        protected override bool BeforeRequest(WebClient client, string url, uint level, int tryCount)
+        protected virtual void BeforeRequestHentai(WebClient client, string url, uint level, int tryCount)
         {
             client.Proxy = new WebProxy("127.0.0.1", 8080);
 
@@ -83,8 +83,13 @@ namespace lnE
             else
             {
                 if (tryCount < 3)
-                   client.Proxy = null;
+                    client.Proxy = null;
             }
+        }
+
+        protected override bool BeforeRequest(WebClient client, string url, uint level, int tryCount)
+        {
+            BeforeRequestHentai(client, url, level, tryCount);
             
             return base.BeforeRequest(client, url, level, tryCount);
         }
