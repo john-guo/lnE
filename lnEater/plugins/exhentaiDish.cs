@@ -20,6 +20,10 @@ namespace lnE
             var cookie = String.Format("ipb_member_id={0};ipb_pass_hash={1}", id, pass);
 
             client.Headers.Add(HttpRequestHeader.Cookie, cookie);
+
+            client.Proxy = new WebProxy("127.0.0.1", 8080);
+            if (tryCount < 3)
+                client.Proxy = null;
         }
     }
 }
