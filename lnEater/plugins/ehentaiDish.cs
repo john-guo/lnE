@@ -67,7 +67,7 @@ namespace lnE
                 n = Path.GetFileName(new Uri(u).AbsolutePath);
             }
 
-            pages.Add(new PageIndex() { name = n, url = u });
+            pages.Add(new PageIndex() { name = n, url = Uri.UnescapeDataString(u) });
 
             return pages;
         }

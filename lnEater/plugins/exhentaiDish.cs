@@ -60,7 +60,7 @@ namespace lnE
 
             client.Headers.Add(HttpRequestHeader.Cookie, cookie);
 
-            client.Proxy = new WebProxy("127.0.0.1", 8080);
+            client.Proxy = new WebProxy("127.0.0.1", 8087);
             if (tryCount < 3)
                 client.Proxy = null;
         }
