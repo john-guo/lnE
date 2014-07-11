@@ -21,7 +21,7 @@ namespace lnE
             try
             {
                 pages = base.GetImageIndex(html, baseUrl);
-                (new WebClient()).DownloadData(pages.First().url);
+                //(new WebClient()).DownloadData(pages.First().url);
             }
             catch
             {
