@@ -43,6 +43,18 @@ namespace lnE
         {
 
         }
+
+        protected void LoadImage(string url, uint level, string path, object userData, int tryCount)
+        {
+            var filename = Path.GetFileName(path);
+            var data = LoadData(ref filename, url, level, tryCount);
+            data = OnData(data, userData);
+            var di = Path.GetDirectoryName(path);
+            if (!Directory.Exists(di))
+                Directory.CreateDirectory(di);
+            path = Path.Combine(di, filename);
+            File.WriteAllBytes(path, data);
+        }
     }
 
     public abstract class ComicDish : BaseComicDish
@@ -68,12 +80,7 @@ namespace lnE
         {
             if (level == 2)
             {
-                var data = LoadData(url, level, tryCount);
-                data = OnData(data, userData);
-                var di = Path.GetDirectoryName(path);
-                if (!Directory.Exists(di))
-                    Directory.CreateDirectory(di);
-                File.WriteAllBytes(path, data);
+                LoadImage(url, level, path, userData, tryCount);
                 return null;
             }
 
@@ -109,12 +116,7 @@ namespace lnE
         {
             if (level == 3)
             {
-                var data = LoadData(url, level, tryCount);
-                data = OnData(data, userData);
-                var di = Path.GetDirectoryName(path);
-                if (!Directory.Exists(di))
-                    Directory.CreateDirectory(di);
-                File.WriteAllBytes(path, data);
+                LoadImage(url, level, path, userData, tryCount);
                 return null;
             }
 

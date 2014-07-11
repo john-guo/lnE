@@ -67,10 +67,24 @@ namespace lnE
             return true;
         }
 
-        protected virtual byte[] LoadData(string url, uint level, int tryCount)
+        protected virtual byte[] LoadData(ref string filename, string url, uint level, int tryCount)
         {
             var client = new MyWebClient();
-            return LoadData(client, url, level, tryCount);
+            var data = LoadData(client, url, level, tryCount);
+
+            var dis = client.ResponseHeaders["Content-Disposition"];
+            if (String.IsNullOrWhiteSpace(dis))
+                return data;
+
+            try
+            {
+                filename = AssemblyHelper.ParseString("filename=(.*)", dis);
+            }
+            catch
+            {
+            }
+
+            return data;
         }
 
         protected virtual byte[] LoadData(WebClient client, string url, uint level, int tryCount)
@@ -80,7 +94,7 @@ namespace lnE
 
             var data = client.DownloadData(url);
 
-            var contentEncoding = client.ResponseHeaders["Content-Encoding"];
+            var contentEncoding = client.ResponseHeaders[HttpResponseHeader.ContentEncoding];
             bool needDecoding = false;
             Type decodingType = null;
             if (!String.IsNullOrWhiteSpace(contentEncoding))
