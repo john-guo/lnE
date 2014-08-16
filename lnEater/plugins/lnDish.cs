@@ -44,7 +44,7 @@ namespace lnE
             StringBuilder sb = new StringBuilder();
             foreach (var node in view.Last().ChildNodes)
             {
-                sb.Append(node.InnerText);
+                sb.Append(HtmlDecode(node.InnerText));
             }
             
             File.WriteAllText(path, sb.ToString());
