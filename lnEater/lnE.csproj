@@ -103,6 +103,9 @@
     <None Include="plugins\exhentaiDish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="plugins\hhDish.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Compile Include="WebDish.cs" />
     <None Include="plugins\lnDish.cs">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
